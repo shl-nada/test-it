@@ -108,3 +108,4 @@ public class TaskServiceTest {
         verify(mailService, atLeastOnce()).sendMail(any(), any(), any());
     }
 }
+
