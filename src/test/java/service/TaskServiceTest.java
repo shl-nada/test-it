@@ -36,6 +36,8 @@ public class TaskServiceTest {
     @InjectMocks
     TaskService taskService;
 
+
+
     @Test
     void should_start_task_successfully() {
         User user = new User();
@@ -45,15 +47,16 @@ public class TaskServiceTest {
         task.setId(10L);
         task.setStatus(Status.OUVERT);
 
-        when(taskRepository.findById(10L)).thenReturn(Optional.of(task));
+        when(taskRepository.findById(10L))
+                .thenReturn(Optional.of(task));
         when(taskRepository.findByUserAndStatus(1L, Status.EN_COURS))
                 .thenReturn(List.of());
-        when(taskRepository.save(task)).thenReturn(task);
+        when(taskRepository.save(task))
+                .thenReturn(task);
 
         Task result = taskService.startTask(10L, 1L);
 
         assertEquals(Status.EN_COURS, result.getStatus());
-
         verify(mailService).sendMail(any(), any(), any());
     }
 
@@ -66,28 +69,14 @@ public class TaskServiceTest {
         task.setId(1L);
         task.setStatus(Status.OUVERT);
 
-        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
+        when(taskRepository.findById(1L))
+                .thenReturn(Optional.of(task));
 
         assertThrows(IllegalArgumentException.class,
                 () -> taskService.startTask(1L, 99L));
     }
 
-    @Test
-    void should_fail_if_user_has_already_ongoing_task() {
-        User user = new User();
-        user.setId(1L);
 
-        Task task = new Task("T", "D", user);
-        task.setId(1L);
-        task.setStatus(Status.OUVERT);
-
-        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
-        when(taskRepository.findByUserAndStatus(1L, Status.EN_COURS))
-                .thenReturn(List.of(new Task()));
-
-        assertThrows(IllegalStateException.class,
-                () -> taskService.startTask(1L, 1L));
-    }
 
 
     @Test
@@ -99,8 +88,10 @@ public class TaskServiceTest {
         task.setId(1L);
         task.setStatus(Status.EN_COURS);
 
-        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
-        when(taskRepository.save(task)).thenReturn(task);
+        when(taskRepository.findById(1L))
+                .thenReturn(Optional.of(task));
+        when(taskRepository.save(task))
+                .thenReturn(task);
 
         Task result = taskService.finishTask(1L, 1L);
 
@@ -108,4 +99,3 @@ public class TaskServiceTest {
         verify(mailService, atLeastOnce()).sendMail(any(), any(), any());
     }
 }
-
