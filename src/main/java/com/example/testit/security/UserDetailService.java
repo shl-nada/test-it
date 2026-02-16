@@ -2,8 +2,11 @@ package com.example.testit.security;
 
 import com.example.testit.model.User;
 import com.example.testit.repository.UserRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserDetailService implements UserDetailsService {
@@ -25,10 +28,14 @@ public class UserDetailService implements UserDetailsService {
                 ? "{noop}password"
                 : user.getPassword();
 
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
-                .password(pwd)
-                .roles("USER")
-                .build();
+        String role = (user.getRole() == null || user.getRole().isBlank())
+                ? "ROLE_USER"
+                : user.getRole();
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                pwd,
+                List.of(new SimpleGrantedAuthority(role))
+        );
     }
 }

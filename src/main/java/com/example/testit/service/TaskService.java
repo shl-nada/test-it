@@ -68,7 +68,7 @@ public class TaskService {
         if (task.getStatus() != Status.OUVERT) {
             throw new IllegalStateException("Task can only be started if status is OUVERT");
         }
-        // Vérifier si user a déjà une tâche EN_COURS
+
         List<Task> ongoingTasks = taskRepository.findByUserAndStatus(userId, Status.EN_COURS);
         if (!ongoingTasks.isEmpty()) {
             throw new IllegalStateException("User cannot have more than one task EN_COURS");
@@ -92,7 +92,6 @@ public class TaskService {
         task.setStatus(Status.FINI);
         Task saved = taskRepository.save(task);
         mailService.sendMail(task.getAssignedUser(), "Tâche terminée", "La tâche '" + task.getTitle() + "' a été terminée.");
-        // Envoyer aussi au manager si présent
         if (task.getAssignedUser().getManager() != null) {
             mailService.sendMail(task.getAssignedUser().getManager(), "Tâche de votre subordonné terminée",
                     "La tâche '" + task.getTitle() + "' assignée à " + task.getAssignedUser().getUsername() + " a été terminée.");

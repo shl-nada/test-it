@@ -4,6 +4,7 @@ import com.example.testit.adapter.user.CurrentUserService;
 import com.example.testit.model.Task;
 import com.example.testit.service.TaskService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,11 +58,13 @@ public class TaskController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
     }
+
 
     @PostMapping("/{id}/start")
     public ResponseEntity<Task> startTask(@PathVariable Long id) {
